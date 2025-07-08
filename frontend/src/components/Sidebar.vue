@@ -10,12 +10,15 @@ const props = defineProps({
 });
 
 const openMenus = ref({});
+const emit = defineEmits(['toggleSidebar']);
 
 function toggleMenu(name) {
+    if (name === 'openSidebar') {
+        emit('toggleSidebar');
+        return;
+    }
     openMenus.value[name] = !openMenus.value[name];
 }
-
-
 
 
 </script>
@@ -27,8 +30,13 @@ function toggleMenu(name) {
             <slot name="logo"></slot>
         </div>
 
-        <nav v-if="!collapsed" class="mt-4">
-            <SidebarNavList :items="navigation" :openMenus="openMenus" :toggleMenu="toggleMenu" :level="0" />
+        <nav class="mt-4">
+            <SidebarNavList 
+                :items="navigation" 
+                :openMenus="openMenus" 
+                :toggleMenu="toggleMenu" 
+                :level="0"
+                :collapsed="collapsed" />
         </nav>
     </aside>
 </template>
@@ -41,7 +49,7 @@ export default {
     components: {
         SidebarNavList: defineComponent({
             name: 'SidebarNavList',
-            props: ['items', 'openMenus', 'toggleMenu', 'level'],
+            props: ['items', 'openMenus', 'toggleMenu', 'level', 'collapsed'],
             setup(props) {
                 function getIcon(iconName) {
                     return HeroIcons[iconName] || HeroIcons['QuestionMarkCircleIcon'];
@@ -57,31 +65,45 @@ export default {
                     const maxPadding = 48;
                     const paddingLeft = `${Math.min(basePadding + props.level * indentPerLevel, maxPadding)}px`;
 
+                    const showName = !(props.collapsed && props.level === 0);
+
+                    const tooltip = props.collapsed && props.level === 0 ? item.name : null;
+
                     return h('div', { class: 'flex flex-col' }, [
                         h('div', {
                             class: ['flex items-center justify-between px-4 py-2 rounded hover:bg-gray-700 cursor-pointer',
                                 item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:text-white'
                             ],
                             style: { paddingLeft },
-                            onClick: hasChildren ? () => props.toggleMenu(item.name) : undefined,
+                            //onClick: hasChildren ? () => props.toggleMenu(item.name) : undefined,
+                            title: tooltip,
+                            onClick: (e) => {
+                                if (props.collapsed && props.level === 0) {
+                                    e.stopPropagation();
+                                    props.toggleMenu && props.toggleMenu('openSidebar');
+                                } else if (hasChildren) {
+                                    props.toggleMenu(item.name);
+                                }
+                            }
                         }, [
                             h('div', { class: 'flex items-center gap-2' }, [
                                 Icon ? h(Icon, { class: 'w-6 h-6 mr-2' }) : null,
-                                h('span', item.name)
+                                showName ? h('span', item.name) : null
                             ]),
-                            hasChildren ? h(HeroIcons.ChevronDownIcon, {
+                            hasChildren && showName ? h(HeroIcons.ChevronDownIcon, {
                                 class: [
                                     'w-4 h-4 transition-transform',
                                     isOpen ? 'transform rotate-180' : ''
                                 ]
                             }) : null
                         ]),
-                        hasChildren && isOpen ? h(
+                        hasChildren && isOpen && showName ? h(
                             SidebarNavList, {
                             items: item.children,
                             openMenus: props.openMenus,
                             toggleMenu: props.toggleMenu,
-                            level: props.level + 1
+                            level: props.level + 1,
+                            collapsed: props.collapsed
                         }
                         ) : null
                     ]);
