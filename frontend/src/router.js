@@ -1,14 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import AuthenticatedLayout from './components/AuthenticatedLayout.vue';
 import Home from './pages/Home.vue';
 import Login from './pages/Login.vue';
 import Register from './pages/Register.vue';
 import NotFound from './pages/NotFound.vue';
+import DefaultLayout from './components/DefaultLayout.vue';
 
 const routes = [
     {
         path: '/',
-        component: AuthenticatedLayout,
+        component: DefaultLayout,
         children: [
             { path: '/', name: 'home', component: Home },
         ]

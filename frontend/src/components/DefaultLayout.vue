@@ -44,11 +44,47 @@ const user = {
     'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
 }
 const navigation = [
-  { name: 'Category', href: '#', current: true },
-  { name: 'Clothes', href: '#', current: false },
-  { name: 'Men Clothes', href: '#', current: false },
-  { name: 'Women Clothes', href: '#', current: false },
-  { name: 'Shoes', href: '#', current: false },
+  { 
+    name: 'Category', 
+    href: '#',
+    icon: 'Squares2X2Icon', 
+    current: true 
+  },
+  { 
+    name: 'Clothes', 
+    href: '#',
+    icon: 'SparklesIcon', 
+    current: false,
+    children: [
+      {
+        name: 'Men Clothes',
+        href: '#',
+        icon: 'UserIcon',
+        children: [
+          { name: 'Shirts', href: '#', icon: 'SparklesIcon' },
+          { name: 'Trousers', href: '#', icon: 'SparklesIcon' },
+        ],
+      },
+      {
+        name: 'Women Clothes',
+        href: '#',
+        icon: 'UserIcon',
+        children: [
+          { name: 'Dresses', href:'#', icon: 'SparklesIcon' },
+          { name: 'Tops', href:'#', icon: 'SparklesIcon' },
+        ],
+      },
+    ], 
+  },
+  { 
+    name: 'Shoes', 
+    href: '#',
+    icon: 'ShoppingBagIcon', 
+    children: [
+      { name: 'Men Shoes', href: '#', icon: 'UserIcon' },
+      { name: 'Women Shoes', href: '#', icon: 'UserIcon' },
+    ] 
+  },
 ]
 const userNavigation = [
   { name: 'Your Profile', href: '#' },
