@@ -63,6 +63,12 @@ const navigation = [
         children: [
           { name: 'Shirts', href: '#', icon: 'SparklesIcon' },
           { name: 'Trousers', href: '#', icon: 'SparklesIcon' },
+          { name: 'T-Shirts & Pollos', href: '#', icon: 'SparklesIcon' },
+          { name: 'Hoodies & Sweatshirts', href: '#', icon: 'SparklesIcon' },
+          { name: 'Jackets & Coats', href: '#', icon: 'SparklesIcon' },
+          { name: 'Suites & Blazers', href: '#', icon: 'SparklesIcon' },
+          { name: 'Underwears', href: '#', icon: 'SparklesIcon' },
+          { name: 'Socks', href: '#', icon: 'SparklesIcon' },
         ],
       },
       {
@@ -71,7 +77,13 @@ const navigation = [
         icon: 'UserIcon',
         children: [
           { name: 'Dresses', href:'#', icon: 'SparklesIcon' },
-          { name: 'Tops', href:'#', icon: 'SparklesIcon' },
+          { name: 'Skirts', href:'#', icon: 'SparklesIcon' },
+          { name: 'Trousers & Leggings', href:'#', icon: 'SparklesIcon' },
+          { name: 'Tops & Blouses', href:'#', icon: 'SparklesIcon' },
+          { name: 'Suites & Blazers', href:'#', icon: 'SparklesIcon' },
+          { name: 'Sweaters & Cardigans', href:'#', icon: 'SparklesIcon' },
+          { name: 'Shorts & Jumpsuites', href:'#', icon: 'SparklesIcon' },
+          { name: 'Underwears & Lingerie', href:'#', icon: 'SparklesIcon' },
         ],
       },
     ], 
@@ -81,8 +93,28 @@ const navigation = [
     href: '#',
     icon: 'ShoppingBagIcon', 
     children: [
-      { name: 'Men Shoes', href: '#', icon: 'UserIcon' },
-      { name: 'Women Shoes', href: '#', icon: 'UserIcon' },
+      { name: 'Men Shoes', 
+        href: '#', 
+        icon: 'UserIcon',
+        children: [
+          { name: 'Sneakers', href: '#', icon: 'SparklesIcon' },
+          { name: 'Boots', href: '#', icon: 'SparklesIcon' },
+          { name: 'Loafers & Slip-ons', href: '#', icon: 'SparklesIcon' },
+          { name: 'Sandals & Flip-flops', href: '#', icon: 'SparklesIcon' },
+          { name: 'Formal Shoes', href: '#', icon: 'SparklesIcon' },
+          { name: 'Athletic Shoes', href: '#', icon: 'SparklesIcon' },
+        ] 
+      },
+      { name: 'Women Shoes', href: '#', icon: 'UserIcon',
+        children: [
+          { name: 'Heels', href: '#', icon: 'SparklesIcon' },
+          { name: 'Flats', href: '#', icon: 'SparklesIcon' },
+          { name: 'Boots', href: '#', icon: 'SparklesIcon' },
+          { name: 'Sneakers', href: '#', icon: 'SparklesIcon' },
+          { name: 'Sandals', href: '#', icon: 'SparklesIcon' },
+          { name: 'Loafers & Slip-ons', href: '#', icon: 'SparklesIcon' },
+        ]
+      },
     ] 
   },
 ]

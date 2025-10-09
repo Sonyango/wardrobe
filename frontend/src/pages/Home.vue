@@ -122,6 +122,58 @@ const categories = [
                 href: '#',
             }
         ]
+    },
+    {
+        name: 'Men Shoes',
+        items: [
+            {
+                name: 'Sneakers',
+                description: 'Casual footwear for everyday use',
+                imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
+                imageAlt: 'Men\'s sneakers',
+                href: '#',
+            },
+            {
+                name: 'Boots',
+                description: 'Durable and stylish boots for all occasions',
+                imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
+                imageAlt: 'Men\'s boots',
+                href: '#',
+            },
+            {
+                name: 'Loafers',
+                description: 'Comfortable loafers for a smart casual look',
+                imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
+                imageAlt: 'Men\'s loafers',
+                href: '#',
+            }
+        ]
+    },
+    {
+        name: 'Women Shoes',
+        items: [
+            {
+                name: 'Heels',
+                description: 'Elegant heels for special occasions',
+                imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
+                imageAlt: 'Women\'s heels',
+                href: '#',
+            },
+            {
+                name: 'Flats',
+                description: 'Comfortable flats for everyday wear',
+                imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
+                imageAlt: 'Women\'s flats',
+                href: '#',
+            },
+            {
+                name: 'Sandals',
+                description: 'Stylish sandals for warm weather',
+                imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
+                imageAlt: 'Women\'s sandals',
+                href: '#',
+            }
+        ]
     }
 ];
 </script>
@@ -132,21 +184,21 @@ const categories = [
         <div class="flex flex-col gap-12">
             <div v-for="category in categories" :key="category.name">
                 <h3 class="text-xl font-semibold text-gray-800 mb-6">{{ category.name }}</h3>
-                <div class="flex flex-row gap-6">
-                    <div class="group bg-white rounded-lg shadow flex flex-col items-center justify-center"
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                    <div class="group bg-white rounded-lg shadow flex flex-col items-center justify-center aspect-square w-full"
                         v-for="item in category.items"
                         :key="item.name"
-                        style="width: 200px; height: 200px;">
+                        >
                         <img :src="item.imageSrc" 
-                             :alt="item.imageAlt" class="w-20 h-20 object-cover rounded-lg group-hover:opacity-80"
+                             :alt="item.imageAlt" class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg group-hover:opacity-80"
                         />
-                        <h4 class="mt-2 text-sm font-medium text-gray-700 text-center">
+                        <h4 class="mt-2 text-xs sm:text-sm font-medium text-gray-700 text-center">
                             <a :href="item.href">
                                 {{ item.name }}
                             </a>
                         </h4>
-                        <p class="text-xs text-gray-500 mt-1 text-center">{{ item.description }}</p>
-                        <button class="mt-2 px-2 py-1 bg-gray-800 text-white rounded hover:bg-gray-700 text-xs">
+                        <p class="text-[10px] sm:text-xs text-gray-500 mt-1 text-center">{{ item.description }}</p>
+                        <button class="mt-2 px-2 py-1 bg-gray-800 text-white rounded hover:bg-gray-700 text-[10px] sm:text-xs">
                             View
                         </button>
                     </div>
