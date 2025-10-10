@@ -4,6 +4,7 @@ import Login from './pages/Login.vue';
 import Register from './pages/Register.vue';
 import NotFound from './pages/NotFound.vue';
 import DefaultLayout from './components/DefaultLayout.vue';
+import CategoryItems from './pages/CategoryItems.vue';
 
 const routes = [
     {
@@ -12,6 +13,12 @@ const routes = [
         children: [
             { path: '/', name: 'home', component: Home },
         ]
+    },
+    {
+        path: '/category/:categoryName/:itemType?',
+        name: 'CategoryItems',
+        component: CategoryItems,
+        props: true,
     },
     {
         path: '/login',
