@@ -1,31 +1,48 @@
 <template>
-  
-  <div class="flex min-h-full">
+  <div class="flex min-h-screen">
     
-    <Sidebar :collapsed="sidebarCollapsed" :navigation="navigation" @toggleSidebar="sidebarCollapsed = !sidebarCollapsed">
-        <template #logo>
-            <img class="size-8" src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
-        </template>
-    </Sidebar>
+    <div class="hidden md:block">
+        <Sidebar 
+          :collapsed="sidebarCollapsed" 
+          :navigation="navigation" 
+          @toggleSidebar="sidebarCollapsed = !sidebarCollapsed"
+          class="sticky top-0 z-30">
+          <template #logo>
+              <img class="size-8" src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
+          </template>
+        </Sidebar>
+      </div>
+    
+    
 
-      <div class="flex-1 flex flex-col min-h-screen bg-gray-50">
+      <div class="flex-1 flex flex-col min-h-screen">
         <Navbar 
           :user="user"
           :userNavigation="userNavigation"
-          @toggleSidebar="sidebarCollapsed = !sidebarCollapsed" />
+          :mobileOpen="mobileSidebarOpen"
+          @toggleSidebar="sidebarCollapsed = !sidebarCollapsed"
+          @toggleMobileSidebar="mobileSidebarOpen = !mobileSidebarOpen" 
+          class="sticky top-0 z-40" />
 
-        <header class="bg-white shadow-sm">
+        <!-- <header class="bg-white shadow-sm">
           <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <h1 class="text-3xl font-bold tracking-tight text-gray-900">Categories</h1>
           </div>
-        </header>
+        </header> -->
 
-        <main>
+        <main class="flex-1 overflow-y-auto bg-gray-50">
           <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             <RouterView />
           </div>
         </main>
       </div>
+
+      <MobileSidebar
+        v-if="mobileSidebarOpen"
+        :navigation="navigation"
+        @close="mobileSidebarOpen = false"
+      />
+
   </div>
 </template>
 
@@ -34,8 +51,10 @@ import { RouterView } from 'vue-router';
 import { ref } from 'vue';
 import Sidebar from './Sidebar.vue';
 import Navbar from './Navbar.vue';
+import MobileSidebar from './MobileSidebar.vue';
 
 const sidebarCollapsed = ref(false);
+const mobileSidebarOpen = ref(false);
 
 const user = {
   name: 'Tom Cook',

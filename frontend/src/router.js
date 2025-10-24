@@ -11,15 +11,23 @@ const routes = [
         path: '/',
         component: DefaultLayout,
         children: [
-            { path: '/', name: 'home', component: Home },
-        ]
+            { path: '', name: 'home', component: Home },
+            {
+                path: 'category/:categoryName/:itemType?',
+                name: 'CategoryItems',
+                component: CategoryItems,
+                props: true,
+            },
+        ],
     },
-    {
-        path: '/category/:categoryName/:itemType?',
-        name: 'CategoryItems',
-        component: CategoryItems,
-        props: true,
-    },
+
+    // {
+    //     path: '/category/:categoryName/:itemType?',
+    //     name: 'CategoryItems',
+    //     component: CategoryItems,
+    //     props: true,
+    // },
+
     {
         path: '/login',
         name: 'login',
@@ -39,7 +47,7 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(),
-    routes
-})
+    routes,
+});
 
 export default router;
