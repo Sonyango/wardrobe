@@ -78,6 +78,7 @@ class RegistrationController extends Controller
             'phone' => $pending->phone,
             'email' => $pending->email,
             'password' => $pending->password,
+            'email_verified_at' => now(),
         ]);
 
         $pending->delete();
