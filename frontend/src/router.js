@@ -5,13 +5,22 @@ import Register from './pages/Register.vue';
 import NotFound from './pages/NotFound.vue';
 import DefaultLayout from './components/DefaultLayout.vue';
 import CategoryItems from './pages/CategoryItems.vue';
+import Dashboard from './components/Dashboard.vue';
+import { useAuthStore } from './stores/auth';
 
 const routes = [
     {
         path: '/',
         component: DefaultLayout,
+        meta: { requiresAuth: true },
         children: [
             { path: '', name: 'home', component: Home },
+            { 
+                path: 'dashboard', 
+                name: 'dashboard', 
+                component: Dashboard,
+                meta: { requiresAuth: true } 
+            },
             {
                 path: 'category/:categoryName/:itemType?',
                 name: 'CategoryItems',
@@ -21,22 +30,17 @@ const routes = [
         ],
     },
 
-    // {
-    //     path: '/category/:categoryName/:itemType?',
-    //     name: 'CategoryItems',
-    //     component: CategoryItems,
-    //     props: true,
-    // },
-
     {
         path: '/login',
         name: 'login',
-        component: Login
+        component: Login,
+        meta: { requiresGuest: true }
     },
     {
         path: '/register',
         name: 'register',
-        component: Register
+        component: Register,
+        meta: { requiresGuest: true }
     },
     {
         path: '/:pathMatch(.*)*',
@@ -48,6 +52,22 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
     routes,
+});
+
+router.beforeEach((to, from, next) => {
+    const authStore = useAuthStore();
+
+    if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+        next({ name: 'login' });
+        return;
+    }
+
+    if (to.meta.requiresGuest && authStore.isAuthenticated) {
+        next({ name: 'dashboard' });
+        return;
+    }
+
+    next();
 });
 
 export default router;
