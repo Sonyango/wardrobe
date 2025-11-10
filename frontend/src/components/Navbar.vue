@@ -52,6 +52,8 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline';
 import MobileLoginDropdown from './MobileLoginDropdown.vue';
 import LoginDropdown from './LoginDropdown.vue';
+import UserMenu from './UserMenu.vue';
+import MobileUserMenu from './MobileUserMenu.vue';
 import { useAuthStore } from '../stores/auth';
 import { logout } from '../services/auth';
 import { useRouter } from 'vue-router';
