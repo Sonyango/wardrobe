@@ -16,7 +16,7 @@ async function handleSubmit(e) {
     e.preventDefault();
     try {
         const response = await login(email.value, password.value);
-        authStore.setUser(response.data.user);
+        //authStore.setUser(response.data.user);
         router.push({ name: 'dashboard' });
     } catch (err) {
         error.value = err.response?.data?.message || 'Login failed.';
