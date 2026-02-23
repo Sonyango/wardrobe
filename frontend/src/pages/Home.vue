@@ -1,190 +1,44 @@
 <script setup>
+import { ref } from 'vue';
 import { categories } from '../data/categories';
+import AddCollectionModal from '../components/AddCollectionModal.vue';
+
+const showModal = ref(false);
 
 const slug = (s = '') => String(s).trim().trim().replace(/\s+/g, '-').toLowerCase();
-// const categories = [
-//     {
-//         name: 'Men Clothes',
-//         items: [
-//             {
-//                 name: 'Shirts',
-//                 description: 'Shorts, Trousers, Jackets',
-//                 imageSrc: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Men's clothes",
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Trousers',
-//                 description: 'Dresses, Tops, Skirts',
-//                 imageSrc: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Women's clothes",
-//                 href: '#',
-//             },
-//             {
-//                 name: 'T-shirts & Pollos',
-//                 description: 'Dresses, Tops, Skirts',
-//                 imageSrc: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Women's clothes",
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Hoodies & Sweatshirts',
-//                 description: 'Dresses, Tops, Skirts',
-//                 imageSrc: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Women's clothes",
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Jackets & Coats',
-//                 description: 'Dresses, Tops, Skirts',
-//                 imageSrc: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Women's clothes",
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Suits & Blazers',
-//                 description: 'Dresses, Tops, Skirts',
-//                 imageSrc: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Women's clothes",
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Underwear',
-//                 description: 'Dresses, Tops, Skirts',
-//                 imageSrc: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Women's clothes",
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Socks',
-//                 description: 'Dresses, Tops, Skirts',
-//                 imageSrc: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Women's clothes",
-//                 href: '#',
-//             },
-            
-//         ]
-//     },
-//     {
-//         name: 'Women Clothes',
-//         items: [
-//             {
-//                 name: 'Dresses',
-//                 description: 'Sneakers, Boots, Loafers',
-//                 imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Men's shoes",
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Skirts',
-//                 description: 'Heels, Flats, Sandals',
-//                 imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Women's shoes",
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Trousers & Leggings',
-//                 description: 'Heels, Flats, Sandals',
-//                 imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Women's shoes",
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Shirts & Blouses',
-//                 description: 'Heels, Flats, Sandals',
-//                 imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Women's shoes",
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Suits & Blazers',
-//                 description: 'Heels, Flats, Sandals',
-//                 imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Women's shoes",
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Sweaters & Cardigans',
-//                 description: 'Heels, Flats, Sandals',
-//                 imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Women's shoes",
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Shorts & Jumpsuits',
-//                 description: 'Heels, Flats, Sandals',
-//                 imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Women's shoes",
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Underwear & Lingerie',
-//                 description: 'Heels, Flats, Sandals',
-//                 imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: "Women's shoes",
-//                 href: '#',
-//             }
-//         ]
-//     },
-//     {
-//         name: 'Men Shoes',
-//         items: [
-//             {
-//                 name: 'Sneakers',
-//                 description: 'Casual footwear for everyday use',
-//                 imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: 'Men\'s sneakers',
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Boots',
-//                 description: 'Durable and stylish boots for all occasions',
-//                 imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: 'Men\'s boots',
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Loafers',
-//                 description: 'Comfortable loafers for a smart casual look',
-//                 imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: 'Men\'s loafers',
-//                 href: '#',
-//             }
-//         ]
-//     },
-//     {
-//         name: 'Women Shoes',
-//         items: [
-//             {
-//                 name: 'Heels',
-//                 description: 'Elegant heels for special occasions',
-//                 imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: 'Women\'s heels',
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Flats',
-//                 description: 'Comfortable flats for everyday wear',
-//                 imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: 'Women\'s flats',
-//                 href: '#',
-//             },
-//             {
-//                 name: 'Sandals',
-//                 description: 'Stylish sandals for warm weather',
-//                 imageSrc: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=400&q=80',
-//                 imageAlt: 'Women\'s sandals',
-//                 href: '#',
-//             }
-//         ]
-//     }
-// ];
+
+function openModal() {
+    showModal.value = true;
+}
+
+function closeModal() {
+    showModal.value = false;
+}
+
+function handleCollectionSubmit(collectionName) {
+    console.log('Collection submitted:', collectionName);
+}
+
 </script>
 
 <template>
     <div class="py-8">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl font-bold text-gray-900 mb-6">Collections</h2>
+            
+
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Collections</h2>
+
+                <button
+                    @click="openModal"
+                    type="button"
+                    aria-label="Collection"
+                    class="inline-flex items-center justify-center gap-2 rounded-md bg-indigo-600 px-3 py-1 5 text-sm font-semibold text-white hover:bg-indigo-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg> <span>Collection</span>
+                </button>
+            </div>
 
             <div class="space-y-12">
                 <div v-for="category in categories" :key="category.name">
@@ -253,7 +107,11 @@ const slug = (s = '') => String(s).trim().trim().replace(/\s+/g, '-').toLowerCas
     </div>
 
         
-
+<AddCollectionModal
+    :isOpen="showModal"
+    @close="closeModal"
+    @submit="handleCollectionSubmit"
+/>
         
 </template>
 
