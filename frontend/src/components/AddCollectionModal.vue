@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
+import axios from 'axios';
 import CustomSelect from './CustomSelect.vue';
 
 const props = defineProps({
@@ -75,23 +76,35 @@ function onImageChange(event) {
 }
 
 function submitForm() {
-    if (!category.value || !gender.value || !item.value) {
-        alert('Please fill in all required fields.');
-        return;
+
+    const formData = new FormData();
+    formData.append('gender', gender.value);
+    formData.append('category', category.value);
+    formData.append('name', item.value);
+    formData.append('description', description.value);
+    if (imageFile.value) {
+        formData.append('image', imageFile.value);
     }
 
-    const payload = {
-        category: category.value,
-        gender: gender.value,
-        item: item.value,
-        description: description.value,
-        image: imageFile.value
-    };
+    axios.post('/api/items', formData, {
+        headers: { 
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+    })
+    .then(response => {
+        console.log('Item created:', response.data);
+        resetAll();
+        emits('close');
+    })
+    .catch(error => {
+        console.error('Error:', error.response.data);
+    });
 
-    emits('save', payload);
-    emits('submit', payload);
-    resetAll();
-    emits('close');
+
+    //resetAll();
+    //emits('close');
 }
 
 function cancel() {
