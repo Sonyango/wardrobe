@@ -2,6 +2,9 @@
 import { ref, computed, watch } from 'vue';
 import axios from 'axios';
 import CustomSelect from './CustomSelect.vue';
+import { useToast } from 'vue-toastification';
+import ToastSuccess from './ToastSuccess.vue';
+import ToastError from './ToastError.vue';
 
 const props = defineProps({
     isOpen: {
@@ -9,6 +12,8 @@ const props = defineProps({
         default: false
     }
 });
+
+const toast = useToast();
 
 
 const emits = defineEmits(['save', 'submit', 'close']);
@@ -95,11 +100,21 @@ function submitForm() {
     })
     .then(response => {
         console.log('Item created:', response.data);
+        toast(ToastSuccess, {
+            props: {
+                message: 'Collection added successfully!'
+            },
+        });
         resetAll();
         emits('close');
     })
     .catch(error => {
-        console.error('Error:', error.response.data);
+        console.error('Error:', error.response?.data || error.message);
+        toast(ToastError, {
+            props: {
+                message: 'Failed to add collection. Please check your input and try again.'
+            },
+        });
     });
 
 
@@ -128,7 +143,7 @@ function resetAll() {
         <div role="dialog" aria-modal="true" aria-labelledby="add-collection-title"
             class="w-full max-w-full sm:max-w-xl md:max-w-2xl lg:max-w-3xl mx-auto bg-white rounded-lg shadow-lg overflow-y-auto overflow-x-hidden flex flex-col max-h-[90vh]">
 
-            <header class="flex-shrink-0 px-6 py-4">
+            <header class="shrink-0 px-6 py-4">
                 <h3 id="add-collection-title" class="text-lg font-semibold text-gray-800">Add New Collection</h3>
             </header>
 
@@ -174,7 +189,7 @@ function resetAll() {
                                 class="w-full rounded-md border-gray-300 px-2 py-2" />
                             <div v-if="imagePreview" class="mt-2">
                                 <img :src="imagePreview" alt="preview"
-                                    class="w-full sm:w-[160px] max-h-[160px] object-cover rounded" />
+                                    class="w-full sm:w-40 max-h-40 object-cover rounded" />
                             </div>
                         </div>
                     </div>
@@ -189,7 +204,7 @@ function resetAll() {
                 </div>
             </section>
 
-            <footer class="px-6 py-4 bg-gray-50 flex-shrink-0">
+            <footer class="px-6 py-4 bg-gray-50 shrink-0">
                 <div class="flex flex-col sm:flex-row justify-center items-center gap-3">
                     <button @click="submitForm" :disabled="!formValid" :class="formValid
                         ? 'w-full sm:w-auto px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-500'
