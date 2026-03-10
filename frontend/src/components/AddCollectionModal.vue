@@ -3,8 +3,6 @@ import { ref, computed, watch } from 'vue';
 import axios from 'axios';
 import CustomSelect from './CustomSelect.vue';
 import { useToast } from 'vue-toastification';
-import ToastSuccess from './ToastSuccess.vue';
-import ToastError from './ToastError.vue';
 
 const props = defineProps({
     isOpen: {
@@ -27,8 +25,8 @@ const imagePreview = ref('');
 
 const itemMap = {
     clothes: {
-        men: ['shirt', 'pants', 'jacket'],
-        women: ['dress', 'skirt', 'blouse']
+        men: ['shirt', 'pants', 'jacket','t-shirt','sweater','suit','underwear','socks','hoodie'],
+        women: ['dress', 'skirt', 'trousers','suit', 'sweater', 'shorts', 'underwear','tops']
     },
     shoes: {
         men: ['sneakers', 'loafers', 'boots'],
@@ -100,26 +98,16 @@ function submitForm() {
     })
     .then(response => {
         console.log('Item created:', response.data);
-        toast(ToastSuccess, {
-            props: {
-                message: 'Collection added successfully!'
-            },
-        });
+        toast.success('Collection added successfully!');
+        
         resetAll();
         emits('close');
     })
     .catch(error => {
         console.error('Error:', error.response?.data || error.message);
-        toast(ToastError, {
-            props: {
-                message: 'Failed to add collection. Please check your input and try again.'
-            },
-        });
+        toast.error('Failed to add collection. Please check your input and try again.');
+        
     });
-
-
-    //resetAll();
-    //emits('close');
 }
 
 function cancel() {
