@@ -22,7 +22,9 @@
                       <div class="hidden md:block">
                         <div class="ml-4 flex items-center md:ml-6">
                           <!-- Profile dropdown -->
-                        <LoginDropdown />
+                        <LoginDropdown v-if="!authStore.isAuthenticated" />
+
+                        <UserMenu v-else :user="authStore.user" @logout="handleLogout" />
                         </div>
                       </div>
                       
@@ -39,7 +41,8 @@
           </div>
 
           <DisclosurePanel class="md:hidden">
-            <MobileLoginDropdown />
+            <MobileLoginDropdown v-if="!authStore.isAuthenticated" />
+            <MobileUserMenu v-else :user="authStore.user" @logout="handleLogout" />
           </DisclosurePanel>
         </Disclosure>
 </template>
@@ -49,12 +52,30 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline';
 import MobileLoginDropdown from './MobileLoginDropdown.vue';
 import LoginDropdown from './LoginDropdown.vue';
+import UserMenu from './UserMenu.vue';
+import MobileUserMenu from './MobileUserMenu.vue';
+import { useAuthStore } from '../stores/auth';
+import { logout } from '../services/auth';
+import { useRouter } from 'vue-router';
+
+
+const router = useRouter();
+const authStore = useAuthStore();
 
 const emit = defineEmits(['toggleSidebar', 'toggleMobileSidebar']);
 
 const props = defineProps({
-    user: Object,
     
     mobileOpen: { type: Boolean, default: false },
-})
+});
+
+async function handleLogout() {
+  try {
+    await logout();
+    authStore.clearUser();
+    router.push({ name: 'login' });
+  } catch (error) {
+    console.error('Logout failed:', error);
+  }
+}
 </script>

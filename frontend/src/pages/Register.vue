@@ -1,10 +1,22 @@
 <script setup>
 import GuestLayout from '../components/GuestLayout.vue';
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 
 const router = useRouter();
+
+const isFormComplete = computed(() => {
+    return (
+        form.fname.trim() &&
+        form.lname.trim() &&
+        form.email.trim() &&
+        form.phone.trim() &&
+        form.password &&
+        form.password_confirmation &&
+        form.password === form.password_confirmation
+    );
+});
 
 const form = reactive({
     fname: '',
@@ -22,6 +34,103 @@ const verificationCode = ref('');
 const verifying = ref(false);
 const verificationError = ref(null);
 const resending = ref(false);
+
+// Resend cooldown state
+// This will hold the timestamp when the user can resend the code
+const resendAvailableAt = ref(null);
+
+// human readable countdown like "15:00"
+const resendCountdown = ref('');
+let resendIntervalId = null;
+
+// computed: verify button enabled - only if code is 6 digits and not currently verifying
+const isVerifyReady = computed(() => {
+    return /^\d{6}$/.test(verificationCode.value) && !verifying.value;
+});
+
+
+// computed: resend button enabled - current time >= resendAvailableAt, not resending & modal is shown
+const isResendReady = computed(() => {
+    const now = Date.now();
+    if (!showCodeModal.value) return false;
+    if (resending.value) return false;
+    if (!resendAvailableAt.value) return true; // no cooldown set, allow resend
+    return now >= resendAvailableAt.value;
+});
+
+
+// helper: update countdown string & clear interval when ready
+function updateResendCountdown() {
+    if (!resendAvailableAt.value) {
+        resendCountdown.value = '';
+        return;
+    }
+    const msLeft = Math.max(0, resendAvailableAt.value - Date.now());
+    if (msLeft <= 0) {
+        resendCountdown.value = '';
+        clearResendInterval();
+        return;
+    }
+    const totalSeconds = Math.ceil(msLeft / 1000);
+    const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+    const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+    resendCountdown.value = `${minutes}:${seconds}`;
+}
+
+// start cooldown for given milliseconds (default 15 minutes)
+function startResendCooldown(ms = 15 * 60 * 1000) {
+    const availableAt = Date.now() + ms;
+    resendAvailableAt.value = availableAt;
+
+    //persist so it survives page reloads
+    const key = `resendAvailableAt:${form.email || '_anon'}`;
+    localStorage.setItem(key, String(availableAt));
+    // ensure countdown starts immediately
+    clearResendInterval();
+    updateResendCountdown();
+    resendIntervalId = setInterval(updateResendCountdown, 1000);
+}
+
+function clearResendInterval() {
+    if (resendIntervalId) {
+        clearInterval(resendIntervalId);
+        resendIntervalId = null;
+    }
+    // if cooldown expired, remove stored timestamp
+    const key = `resendAvailableAt:${form.email || '_anon'}`;
+    const stored = localStorage.getItem(key);
+    if (stored && Number(stored) <= Date.now()) {
+        localStorage.removeItem(key);
+        resendAvailableAt.value = null;
+        resendCountdown.value = '';
+    }
+}
+
+// restore cooldown on load (if exists)
+onMounted(() => {
+    const key = `resendAvailableAt:${form.email || '_anon'}`;
+    const anonKey = `resendAvailableAt:_anon`;
+    const stored = localStorage.getItem(key) ?? localStorage.getItem(anonKey);
+    if (stored) {
+        const ts = Number(stored);
+        if (!isNaN(ts) && ts > Date.now()) {
+            resendAvailableAt.value = ts;
+            updateResendCountdown();
+            if (!resendIntervalId) resendIntervalId = setInterval(updateResendCountdown, 1000);
+        } else {
+            // expired
+            localStorage.removeItem(key);
+            localStorage.removeItem(anonKey);
+            resendAvailableAt.value = null;
+            resendCountdown.value = '';
+        }
+    }
+});
+
+// clear interval when component unmounts
+onBeforeUnmount(() => {
+    clearResendInterval();
+});
 
 
 async function submitRegistration(e) {
@@ -47,6 +156,11 @@ async function submitRegistration(e) {
         });
 
         showCodeModal.value = true;
+
+        // start cooldown (only if not already active)
+        if (!resendAvailableAt.value || Date.now() >= resendAvailableAt.value) {
+            startResendCooldown();
+        }
     } catch (err) {
         error.value = err.response?.data?.message || 'Error occured while sending verification code. Failed to register. Please try again.';
     } finally {
@@ -64,6 +178,13 @@ async function verifyCode(e) {
             email: form.email,
             code: verificationCode.value
         });
+
+        // clear persisted cooldown after successful verification
+        const key = `resendAvailableAt:${form.email || '_anon'}`;
+        localStorage.removeItem(key);
+        resendAvailableAt.value = null;
+        resendCountdown.value = '';
+        clearResendInterval();
 
         router.push({ name: 'login' });
     } catch (err) {
@@ -88,6 +209,7 @@ async function resendCode() {
         });
 
         verificationError.value = 'New verification code sent! Please check your email.';
+        startResendCooldown();
     } catch (err) {
         verificationError.value = err.response?.data?.message || 'Error occured while resending verification code.';
     } finally {
@@ -199,8 +321,8 @@ async function resendCode() {
 
                     <div class="mt-4">
                         <button type="submit"
-                            :disabled="loading" 
-                            class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                            :disabled="!isFormComplete || loading" 
+                            class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-indigo-300 disabled:cursor-not-allowed">
                             {{ loading ? 'Sending...' : 'Sign-Up' }}
                         </button>
                     </div>
@@ -230,15 +352,18 @@ async function resendCode() {
 
                         <div class="flex gap-3">
                             <button type="submit"
-                                :disabled="verifying" 
-                                class="flex flex-1 justify-center rounded-md bg-indigo-600 px-3 py-1 5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-indigo-300">
+                                :disabled="!isVerifyReady" 
+                                class="flex flex-1 justify-center rounded-md bg-indigo-600 px-3 py-1 5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:bg-indigo-300 disabled:cursor-not-allowed">
                                 {{ verifying ? 'Verifying...' : 'Verify Code' }}
                             </button>
+
                             <button type="button"
                                 @click="resendCode"
-                                :disabled="resending || verifying"
-                                class="flex flex-1 justify-center rounded-md bg-gray-600 px-3 py-1 5 text-sm/6 font-semibold text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:bg-gray-300">
-                                {{ resending ? 'Sending...' : 'Resend Code' }}
+                                :disabled="!isResendReady"
+                                class="flex flex-1 justify-center rounded-md bg-gray-600 px-3 py-1 5 text-sm/6 font-semibold text-white shadow-xs hover:bg-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 disabled:bg-gray-300 disabled:cursor-not-allowed">
+                                <span v-if="resending">{{ 'Sending...' }}</span>
+                                <span v-else-if="!isResendReady">Resend ({{ resendCountdown || '15:00' }})</span>
+                                <span v-else>Resend Code</span>
                             </button>
                         </div>
                     </form>
