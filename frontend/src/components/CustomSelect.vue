@@ -9,7 +9,7 @@
             :disabled="disabled"
         >
             <span>{{ modelValue || placeholder }}</span>
-            <svg class="w-4 h-4 ml-auto flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-4 h-4 ml-auto shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
         </button>
@@ -17,7 +17,7 @@
         <Teleport to="body">
             <div
                 v-if="isOpen"
-                class="fixed bg-white border border-gray-300 rounded-md shadow-lg z-[9999]"
+                class="fixed bg-white border border-gray-300 rounded-md shadow-lg z-9999"
                 :style="dropdownStyle">
                 <button
                     v-for="option in options"

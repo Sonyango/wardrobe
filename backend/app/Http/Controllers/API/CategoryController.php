@@ -13,7 +13,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        return Category::with('items', 'gender')->get();
     }
 
     /**
