@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\API\GenderController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\ItemController;
+use App\Http\Controllers\API\DashboardController;
 
 
 Route::post('register/send-code', [RegistrationController::class, 'sendCode']);
@@ -20,6 +21,8 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::apiResource('genders', GenderController::class);
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('items', ItemController::class);
+
+    Route::get('dashboard/stats', [DashboardController::class, 'stats']);
 });
 
 
