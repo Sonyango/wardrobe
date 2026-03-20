@@ -56,4 +56,31 @@ class DashboardController extends Controller
             ]
         ]);
     }
+
+    public function categoryStats(Request $request)
+    {
+        $request->validate([
+            'gender' => 'required|in:men,women',
+            'type' => 'required|in:clothes,shoes'
+        ]);
+
+        // Get gender ID
+        $gender = Gender::where('name', $request->gender)->first();
+
+        if (!$gender) {
+            return response()->json(['message' => 'Gender not found.'], 404);
+        }
+
+        // Get grouped items
+        $items = Item::where('gender_id', $gender->id)
+            ->whereHas('category', function($query) use ($request) {
+                $query->where('type', $request->type);
+            })
+            ->selectRaw('name, COUNT(*) as total')
+            ->groupBy('name')
+            ->orderByDesc('total')
+            ->get();
+
+        return response()->json($items);
+    }
 }

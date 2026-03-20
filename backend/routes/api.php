@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::apiResource('items', ItemController::class);
 
     Route::get('dashboard/stats', [DashboardController::class, 'stats']);
+    Route::get('dashboard/category-stats', [DashboardController::class, 'categoryStats']);
 });
 
 
