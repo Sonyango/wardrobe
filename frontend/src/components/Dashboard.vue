@@ -139,7 +139,7 @@ export default {
     },
     
     methods: {
-        async fetchCategoryStats() {
+        async fetchCategoryStats(gender, type) {
             this.loading = true;
 
             try {
