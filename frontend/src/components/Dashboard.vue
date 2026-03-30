@@ -1,9 +1,9 @@
 <template>
     <div class="container mx-auto px-4 py-6">
         <h1 class="text-2xl font-semibold text-gray-900 mb-6">Dashboard</h1>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
 
-            <div class="bg-white shadow rounded-lg p-6">
+            <div class="bg-white shadow rounded-lg p-6 h-fit">
                 <h2 class="text-lg font-medium text-gray-900 mb-4">Clothes Collection</h2>
                 <div v-if="stats.clothes">
                     <p class="text-sm text-gray-600">Total Clothes: <span class="font-semibold">{{ stats.clothes.total
@@ -15,7 +15,7 @@
                 <div v-else class="text-sm text-gray-500">Loading...</div>
             </div>
 
-            <div class="bg-white shadow rounded-lg p-6">
+            <div class="bg-white shadow rounded-lg p-6 h-fit">
                 <h2 class="text-lg font-medium text-gray-900 mb-4">Shoes Collection</h2>
                 <div v-if="stats.shoes">
                     <p class="text-sm text-gray-600">Total Shoes: <span class="font-semibold">{{ stats.shoes.total
@@ -27,17 +27,18 @@
                 <div v-else class="text-sm text-gray-500">Loading...</div>
             </div>
 
-            <div class="bg-white shadow rounded-lg p-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-lg font-medium text-gray-900 mb-4">Statistics</h2>
+            <div class="bg-white shadow rounded-lg p-6 h-fit">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between flex-wrap gap-2 mb-4 w-full">
+                    <h2 class="text-lg font-medium text-gray-900 sm:mb-0">Statistics</h2>
 
                     <!-- Headless UI Dropdown-->
+                     <div class="w-full sm:w-auto">
                     <Listbox v-model="selected">
                         <div class="relative">
 
                             <!-- Button-->
                             <ListboxButton
-                                class="relative w-40 cursor-pointer rounded-md border border-gray-300 bg-white py-1.5 pl-3 pr-10 text-left text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                class="relative w-full sm:w-40 cursor-pointer rounded-md border border-gray-300 bg-white py-1.5 pl-3 pr-10 text-left text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
                                 <span class="block truncate">{{ selected.name }}</span>
 
                                 <!-- Dropdown Icon-->
@@ -63,6 +64,7 @@
                             </ListboxOptions>
                         </div>
                     </Listbox>
+                    </div>
 
                     
                 </div>
