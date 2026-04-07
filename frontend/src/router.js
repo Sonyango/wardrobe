@@ -7,6 +7,7 @@ import DefaultLayout from './components/DefaultLayout.vue';
 import CategoryItems from './pages/CategoryItems.vue';
 import Dashboard from './components/Dashboard.vue';
 import { useAuthStore } from './stores/auth';
+import UserProfile from './pages/UserProfile.vue';
 
 const routes = [
     {
@@ -27,6 +28,12 @@ const routes = [
                 component: CategoryItems,
                 props: true,
             },
+            {
+                path: 'profile',
+                name: 'profile',
+                component: UserProfile,
+                meta: { requiresAuth: true }
+            }
         ],
     },
 
