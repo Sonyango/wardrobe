@@ -1,5 +1,6 @@
 <template>
     <div class="max-w-4xl mx-auto py-8 px-4">
+        <div :class="['space-y-6 transition-all duration-200', isModalOpen ? 'blur-sm filter pointer-events-none' : '']">
         <h1 class="text-xl font-semibold mb-1">User Profile</h1>
 
         <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
@@ -42,7 +43,7 @@
             <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
                 <div class="flex gap-4">
                     <button 
-                        @click="gotToSettings" 
+                        @click="openEditModal" 
                         class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition">
                         Edit Profile
                     </button>
@@ -56,12 +57,24 @@
             
         </div>
     </div>
+
+    <EditUserProfileModal
+        :is-open="isModalOpen"
+        :user="user"
+        @close="closeModal"
+        @save="saveProfile"
+    />
+
+    </div>
 </template>
 
 <script setup>
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
-import { UserCircleIcon } from '@heroicons/vue/24/outline';
+import { PhoneXMarkIcon, UserCircleIcon, XMarkIcon } from '@heroicons/vue/24/outline';
+import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
+import { ref, reactive } from 'vue';
+import EditUserProfileModal from '../components/EditUserProfileModal.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -70,11 +83,38 @@ const user = authStore.user;
 
 const userProfileImage = user?.avatarUrl || UserCircleIcon;
 
+const isModalOpen = ref(false);
+
 function gotToSettings() {
     router.push({ name: 'settings' });
 }
 
 function goBack() {
     router.back();
+}
+
+function openEditModal() {
+    isModalOpen.value = true;
+}
+
+function closeModal() {
+    isModalOpen.value = false;
+}
+
+async function saveProfile(updatedUser) {
+    try {
+        if (updatedUser.userProfileImage instanceof File) {
+            // Create formData to send to backend
+            const formData = new FormData();
+            formData.append('name', updatedUser.name);
+            formData.append('email', updatedUser.email);
+            formData.append('phone', updatedUser.phone);
+            formData.append('profileImage', updatedUser.profileImage);
+        }
+        authStore.updateUser(updatedUser);
+        closeModal();
+    } catch (error) {
+        console.error('Failed to update profile:', error);
+    }
 }
 </script>
