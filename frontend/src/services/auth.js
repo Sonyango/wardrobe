@@ -24,6 +24,33 @@ export async function login(email, password) {
     }
 }
 
+export async function updateProfile(userData) {
+    try {
+
+        const formData = new FormData();
+        formData.append('_method', 'PUT');
+        formData.append('name', userData.name);
+        formData.append('email', userData.email);
+        formData.append('phone', userData.phone || '');
+
+        if (userData.profileImage instanceof File) {
+            formData.append('profileImage', userData.profileImage);
+        }
+
+        const response = await api.post('/user/profile', formData);
+
+        const authStore = useAuthStore();
+        authStore.updateUser(response.data.user);
+
+        return response.data;
+    } catch (error) {
+        if (error.response?.status === 422) {
+            console.error('Validation errors:', error.response.data.errors);
+        }
+        throw error;
+    }
+}
+
 export async function logout() {
     try {
         const response = await api.post('/logout');

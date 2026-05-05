@@ -8,6 +8,7 @@ use App\Http\Controllers\API\GenderController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\ItemController;
 use App\Http\Controllers\API\DashboardController;
+use App\Http\Controllers\API\UserController;
 
 
 Route::post('register/send-code', [RegistrationController::class, 'sendCode']);
@@ -24,6 +25,7 @@ Route::middleware('auth:sanctum')->group(function (){
 
     Route::get('dashboard/stats', [DashboardController::class, 'stats']);
     Route::get('dashboard/category-stats', [DashboardController::class, 'categoryStats']);
+    Route::put('user/profile', [UserController::class, 'update']);
 });
 
 

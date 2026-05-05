@@ -26,6 +26,16 @@ export const useAuthStore = defineStore('auth', () => {
         )
     }
 
+    function updateUser(updatedData) {
+        user.value = { ...user.value, ...updatedData };
+
+        if (user.value) {
+            localStorage.setItem('user', JSON.stringify(user.value));
+        } else {
+            localStorage.removeItem('user');
+        }
+    }
+
     function clearUser() {
         user.value = null;
         token.value = null;
@@ -47,6 +57,7 @@ export const useAuthStore = defineStore('auth', () => {
         setUser, 
         setToken, 
         clearUser,
-        initializer
+        initializer,
+        updateUser
      };
 })

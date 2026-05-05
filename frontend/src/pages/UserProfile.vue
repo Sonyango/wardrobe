@@ -73,15 +73,22 @@ import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
 import { PhoneXMarkIcon, UserCircleIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { ref, reactive } from 'vue';
+import { ref, reactive, computed } from 'vue';
 import EditUserProfileModal from '../components/EditUserProfileModal.vue';
+import { updateProfile } from '../services/auth';
 
 const router = useRouter();
 const authStore = useAuthStore();
 
-const user = authStore.user;
+//const user = authStore.user;
+const user = computed(() => authStore.user);
 
-const userProfileImage = user?.avatarUrl || UserCircleIcon;
+const userProfileImage = computed(() => {
+    if (user.value?.profile_image) {
+        return `http://localhost:8000/storage/${user.value.profile_image}`;
+    }
+    return UserCircleIcon;
+});
 
 const isModalOpen = ref(false);
 
@@ -103,15 +110,8 @@ function closeModal() {
 
 async function saveProfile(updatedUser) {
     try {
-        if (updatedUser.userProfileImage instanceof File) {
-            // Create formData to send to backend
-            const formData = new FormData();
-            formData.append('name', updatedUser.name);
-            formData.append('email', updatedUser.email);
-            formData.append('phone', updatedUser.phone);
-            formData.append('profileImage', updatedUser.profileImage);
-        }
-        authStore.updateUser(updatedUser);
+        console.log('saveProfile called with:', updatedUser);
+        await updateProfile(updatedUser);
         closeModal();
     } catch (error) {
         console.error('Failed to update profile:', error);

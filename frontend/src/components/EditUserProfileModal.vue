@@ -168,7 +168,14 @@ watch(() => props.user, (newUser) => {
         editedUser.name = newUser.name || '';
         editedUser.email = newUser.email || '';
         editedUser.phone = newUser.phone || '';
-        editedUser.profileImage = newUser.profileImage || null;
+        editedUser.profileImage = null; // File object, not the image string
+        
+        // Set imagePreview to show the existing profile image
+        if (newUser.profile_image) {
+            imagePreview.value = `http://localhost:8000/storage/${newUser.profile_image}`;
+        } else {
+            imagePreview.value = null;
+        }
     }
 }, { immediate: true });
 
