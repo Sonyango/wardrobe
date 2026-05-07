@@ -113,6 +113,7 @@
                                 </div>
                                 <div class="flex justify-end space-x-3 pt-4">
                                     <button 
+                                        type="button"
                                         @click="$emit('close')"
                                         class="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                     >
@@ -120,9 +121,21 @@
                                     </button>
                                     <button 
                                         type="submit"
-                                        class="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                        :disabled="!hasChanges || isSaving"
+                                        :class="{
+                                            'inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2': true,
+                                            'opacity-50 cursor-not-allowed': !hasChanges || isSaving,
+                                            'hover:bg-blue-700': hasChanges && isSaving
+                                        }"
                                     >
-                                        Save Changes
+                                        <span v-if="!isSaving">Save Changes</span>
+                                        <span v-else class="flex items-center gap-2">
+                                            <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                            </svg>
+                                            Saving changes...
+                                        </span>
                                     </button>
                                 </div>
                             </form>
@@ -149,6 +162,9 @@ const props = defineProps({
         required: true
     }
 });
+
+const isSaving = ref(false);
+const hasChanges = ref(false);
 
 const emit = defineEmits(['close', 'save']);
 
@@ -178,6 +194,41 @@ watch(() => props.user, (newUser) => {
         }
     }
 }, { immediate: true });
+
+function detectChanges() {
+    const originalUser = props.user;
+
+    const changes = {
+        name: editedUser.name !== (originalUser?.name || ''),
+        email: editedUser.email !== (originalUser?.email || ''),
+        phone: editedUser.phone !== (originalUser?.phone || ''),
+        profileImage: editedUser.profileImage !== null
+    };
+
+    hasChanges.value = Object.values(changes).some(change => change === true);
+}
+
+// Watcher for all relevant fields to detect changes
+const fieldsToWatch = ['name', 'email', 'phone', 'profileImage'];
+
+fieldsToWatch.forEach(field => {
+    watch(() => editedUser[field], () => {
+        detectChanges();
+    });
+});
+
+// Reset state when modal opens with fresh data
+watch(() => props.user, () => {
+    hasChanges.value = false;
+    isSaving.value = false;
+}, { immediate: true });
+
+//Reset saving state when modal closes
+watch(() => props.isOpen, (newval) => {
+    if (!newval) {
+        isSaving.value = false;
+    }
+});
 
 function triggerFileInput() {
     fileInput.value.click();
@@ -211,6 +262,12 @@ function removeProfileImage() {
 }
 
 function saveProfile() {
-    emit('save', { ...editedUser });
+    isSaving.value = true;
+    try {
+        emit('save', { ...editedUser });
+    } catch (error) {
+        isSaving.value = false;
+        console.error('Error saving profile:', error);
+    }
 }
 </script>

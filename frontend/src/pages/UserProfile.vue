@@ -76,9 +76,11 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { ref, reactive, computed } from 'vue';
 import EditUserProfileModal from '../components/EditUserProfileModal.vue';
 import { updateProfile } from '../services/auth';
+import { useToast } from 'vue-toastification';
 
 const router = useRouter();
 const authStore = useAuthStore();
+const toast = useToast();
 
 //const user = authStore.user;
 const user = computed(() => authStore.user);
@@ -112,9 +114,11 @@ async function saveProfile(updatedUser) {
     try {
         console.log('saveProfile called with:', updatedUser);
         await updateProfile(updatedUser);
+        toast.success('Profile updated successfully!');
         closeModal();
     } catch (error) {
         console.error('Failed to update profile:', error);
+        toast.error('Failed to update profile.');
     }
 }
 </script>
