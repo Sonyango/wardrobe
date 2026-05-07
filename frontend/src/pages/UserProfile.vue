@@ -6,15 +6,15 @@
         <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6">
             <!--Profile header-->
             <div class="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 mb-3">
-                <div class="flex items-center">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-4">
                     <img 
                         :src="userProfileImage" 
                         :alt="user.name" 
-                        class="h-16 w-16 rounded-full mr-4" />
+                        class="h-16 w-16 rounded-full shrink-0" />
                 
-                    <div>
-                        <h2 class="text-sm font-bold">{{ user.name }}</h2>
-                        <p class="text-gray-500">{{ user.email }}</p>
+                    <div class="min-w-0">
+                        <h2 class="text-sm font-bold truncate">{{ user.name }}</h2>
+                        <p class="text-gray-500 truncate">{{ user.email }}</p>
                     </div>
                 </div>
             </div>
@@ -112,7 +112,6 @@ function closeModal() {
 
 async function saveProfile(updatedUser) {
     try {
-        console.log('saveProfile called with:', updatedUser);
         await updateProfile(updatedUser);
         toast.success('Profile updated successfully!');
         closeModal();

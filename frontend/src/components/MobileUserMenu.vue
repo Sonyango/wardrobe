@@ -13,7 +13,7 @@
         </div>
 
         <div class="mt-3 space-y-1 px-2">
-            <DisclosureButton as="a" href="#"
+            <DisclosureButton as="a" href="#" @click="goToProfile"
                 class="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-gray-700 hover:text-white">
                 Your Profile
             </DisclosureButton>
@@ -33,6 +33,9 @@
 import { DisclosureButton } from '@headlessui/vue';
 import { UserCircleIcon } from '@heroicons/vue/24/outline';
 import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 const props = defineProps({
     user: {
@@ -53,4 +56,8 @@ const userProfileImage = computed(() => {
     }
     return null;
 });
+
+function goToProfile() {
+    router.push({ name: 'profile' });
+}
 </script>

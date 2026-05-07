@@ -1,15 +1,26 @@
 <script setup>
 //import { defineEmits } from 'vue';
 import { RouterLink } from 'vue-router';
+import { ChevronDownIcon } from '@heroicons/vue/24/outline';
+import { ref } from 'vue';
 
 const props = defineProps({
     navigation: { type: Array, default: () => [] },
 });
 const emit = defineEmits(['close']);
+const expandedGroups = ref({});
 
 const slug = (s = '') => String(s).trim().replace(/\s+/g, '-').toLowerCase();
 
+function toggleGroup(idx) {
+    expandedGroups.value[idx] = !expandedGroups.value[idx];
+}
+
 function routeFor(item, parent = null) {
+    if (item.name?.toLowerCase() === 'dashboard') {
+        return { name: 'dashboard' };
+    }
+
     if (parent) {
         return { name: 'CategoryItems', params: { categoryName: slug(parent), itemType: slug(item.name) } };
     }
@@ -33,21 +44,32 @@ function routeFor(item, parent = null) {
                 <nav class="px-2 py-4">
                     <ul class="space-y-1">
                         <li v-for="(group, gIdx) in navigation" :key="gIdx">
-                            <div class="px-2 py-1 text-xs text-gray-400 uppercase">{{ group.name }}</div>
 
                             <template v-if="group.children">
-                                <template v-for="(sub, sIdx) in group.children" :key="sIdx">
-                                    <div class="pl-4 pr-2 py-1 text-sm font-medium text-gray-200">{{ sub.name }}</div>
-                                    <ul class="pl-6 space-y-1">
-                                        <li v-for="(leaf, lIdx) in sub.children" :key="lIdx">
-                                            <RouterLink
-                                                :to="routeFor(leaf, sub.name)"
-                                                class="block px-2 py-1 rounded text-sm text-gray-200 hover:bg-gray-700"
-                                                @click.native="emit('close')">
-                                                {{ leaf.name }}
-                                            </RouterLink>
-                                        </li>
-                                    </ul>
+                                <button
+                                    @click="toggleGroup(gIdx)"
+                                    class="w-full flex items-center justify-between px-2 py-1 rounded text-sm font-medium text-gray-200 hover:bg-gray-700"
+                                >
+                                    {{ group.name }}
+                                    <ChevronDownIcon 
+                                        :class="['h-4 w-4 transition-transform', expandedGroups[gIdx] ? 'rotate-180' : '']"
+                                    />
+                                </button>
+                                
+                                <template v-if="expandedGroups[gIdx]">
+                                    <template v-for="(sub, sIdx) in group.children" :key="sIdx">
+                                        <div class="pl-4 pr-2 py-1 text-sm font-medium text-gray-200">{{ sub.name }}</div>
+                                        <ul class="pl-6 space-y-1">
+                                            <li v-for="(leaf, lIdx) in sub.children" :key="lIdx">
+                                                <RouterLink
+                                                    :to="routeFor(leaf, sub.name)"
+                                                    class="block px-2 py-1 rounded text-sm text-gray-200 hover:bg-gray-700"
+                                                    @click="emit('close')">
+                                                    {{ leaf.name }}
+                                                </RouterLink>
+                                            </li>
+                                        </ul>
+                                    </template>
                                 </template>
                             </template>
 
@@ -70,5 +92,5 @@ function routeFor(item, parent = null) {
 
 <style scoped>
 .fade-enter-active, .fade-leave-active { transition: opacity .15s }
-.fade-enter-from, .fade-laeve-to { opacity: 0; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
 </style>
