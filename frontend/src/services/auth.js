@@ -51,6 +51,40 @@ export async function updateProfile(userData) {
     }
 }
 
+// Password reset functions
+
+export async function sendPasswordResetCode(email) {
+    try {
+        const response = await api.post('/password-reset/send-code', { email });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function verifyPasswordResetCode(email, code) {
+    try {
+        const response = await api.post('/password-reset/verify-code', { email, code });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export async function resetPassword(email, code, password, password_confirmation) {
+    try {
+        const response = await api.post('/password-reset/reset', {
+            email,
+            code,
+            password,
+            password_confirmation
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
 export async function logout() {
     try {
         const response = await api.post('/logout');

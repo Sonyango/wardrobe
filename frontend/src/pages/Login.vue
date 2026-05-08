@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import { login } from '../services/auth';
 import GuestLayout from '../components/GuestLayout.vue';
+import ForgotPassword from '../components/ForgotPassword.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -11,6 +12,7 @@ const authStore = useAuthStore();
 const email = ref('');
 const password = ref('');
 const error = ref('');
+const showForgotPassword = ref(false);
 
 async function handleSubmit(e) {
     e.preventDefault();
@@ -53,7 +55,7 @@ async function handleSubmit(e) {
                     <div class="flex items-center justify-between">
                         <label for="password" class="block text-sm/6 font-medium text-gray-900">Password</label>
                         <div class="text-sm">
-                        <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a>
+                        <a href="#" class="font-semibold text-indigo-600 hover:text-indigo-500" @click.prevent="showForgotPassword = true">Forgot password?</a>
                         </div>
                     </div>
                     <div class="mt-2">
@@ -81,6 +83,9 @@ async function handleSubmit(e) {
                     <RouterLink :to="{ name: 'register' }" class="font-semibold text-indigo-600 hover:text-indigo-500">Signup here</RouterLink>
                 </p>
             </div>
+
+            <!-- Forgot Password Modal -->
+             <ForgotPassword v-model="showForgotPassword" />
         
     </GuestLayout>
 </template>
