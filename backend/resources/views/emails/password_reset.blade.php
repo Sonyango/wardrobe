@@ -1,8 +1,8 @@
 @component('mail::message')
 # Hello {{ $name }},
 
-We received a request to reset your password for your {{ config('app.name') }} account.
-Use the password reset code below to reset your password:
+We received a password reset request for your {{ config('app.name') }} account.
+Please use the code below to reset your password.
 
 @component('mail::panel')
 {{ $code }}

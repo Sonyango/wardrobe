@@ -28,7 +28,7 @@ class PasswordResetController extends Controller
 
         if (!$user) {
             return response()->json([
-                'message' => 'If that email address is in our system, we have sent a password reset code to it.',
+                'message' => 'Email address provided does not exist in our records.',
             ], 404);
         }
 
@@ -50,7 +50,7 @@ class PasswordResetController extends Controller
         Mail::to($data['email'])->send(new PasswordResetMail($user->name, $code));
 
         return response()->json([
-            'message' => 'verification code sent to your email.'
+            'message' => 'Verification code sent to your email.'
         ], 200);
     }
 

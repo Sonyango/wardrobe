@@ -5,9 +5,11 @@ import { useAuthStore } from '../stores/auth';
 import { login } from '../services/auth';
 import GuestLayout from '../components/GuestLayout.vue';
 import ForgotPassword from '../components/ForgotPassword.vue';
+import { useToast } from 'vue-toastification';
 
 const router = useRouter();
 const authStore = useAuthStore();
+const toast = useToast();
 
 const email = ref('');
 const password = ref('');
@@ -23,6 +25,11 @@ async function handleSubmit(e) {
     } catch (err) {
         error.value = err.response?.data?.message || 'Login failed.';
     }
+}
+
+// Show success toast after password reset
+function passwordResetSuccess(email) {
+    toast.success(`Password reset successful for ${email}. Please log in with your new password.`);
 }
 </script>
 
@@ -85,7 +92,7 @@ async function handleSubmit(e) {
             </div>
 
             <!-- Forgot Password Modal -->
-             <ForgotPassword v-model="showForgotPassword" />
+             <ForgotPassword v-model="showForgotPassword" @passwordResetSuccess="passwordResetSuccess" />
         
     </GuestLayout>
 </template>
