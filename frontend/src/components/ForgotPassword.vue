@@ -97,7 +97,7 @@ const props = defineProps({
     modelValue: Boolean
 });
 
-const emit = defineEmits(['update:modelvalue']);
+const emit = defineEmits(['update:modelValue']);
 
 const step = ref('email');
 const email = ref('');
@@ -149,14 +149,14 @@ async function handleVerifyCode(e) {
 }
 
 // Step 3: Reset password
-async function handleResetpassword(e) {
+async function handleResetPassword(e) {
     e.preventDefault();
     loading.value = true;
     error.value = '';
 
     try {
         await resetPassword(email.value, code.value, password.value, passwordConfirmation.value);
-        emit('update:modelvalue', false);
+        emit('update:modelValue', false);
         resetForm();
     } catch (err) {
         error.value = err.response?.data?.message || 'Failed to reset password. Please try again.';
@@ -177,7 +177,7 @@ function resetForm() {
 
 // Close modal
 function handleClose() {
-    emit('update:modelvalue', false);
+    emit('update:modelValue', false);
     resetForm();
 }
 </script>
