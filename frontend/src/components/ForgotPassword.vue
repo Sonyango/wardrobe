@@ -29,8 +29,12 @@
                                 v-model="email"
                                 type="email"
                                 required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                :disabled="loading"
+                                :class="[
+                                    'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500',
+                                    emailValidationFailed ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                ]"
+                                :disabled="loading || emailValidationFailed"
+                                placeholder="Enter registered email"
                             />
                         </div>
                         
@@ -41,10 +45,18 @@
                         <button
                             type="submit"
                             :disabled="!isEmailReady || loading"
-                            class="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+                            :class="[
+                                'w-full py-2 rounded-md transition-colors',
+                                (!isEmailReady || loading) 
+                                    ? 'bg-gray-400 cursor-not-allowed' 
+                                    : 'bg-indigo-600 text-white hover:bg-indigo-700'
+                            ]"
                         >
                             {{ loading ? 'Sending...' : 'Request Reset Code' }}
                         </button>
+                        <p class="text-xs text-gray-500 text-center mt-2">
+                            Enter the email address associated with your account.
+                        </p>
                     </form>
                 </div>
 
@@ -153,7 +165,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { sendPasswordResetCode, verifyPasswordResetCode, resetPassword } from '../services/auth';
 
 const props = defineProps({
@@ -170,13 +182,29 @@ const passwordConfirmation = ref('');
 const error = ref('');
 const loading = ref(false);
 
+const emailValidationFailed = ref(false);
+const failedEmail = ref('');
+
 // Computed properties
-const isEmailReady = computed(() => email.value.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value));
+//const isEmailReady = computed(() => email.value.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value));
+const isEmailReady = computed(() => {
+    return email.value.trim() &&
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value) &&
+        !emailValidationFailed.value;
+});
 const isCodeReady = computed(() => /^\d{6}$/.test(code.value) && !loading.value);
 const isPasswordReady = computed(() => {
     return password.value && passwordConfirmation.value &&
         password.value === passwordConfirmation.value &&
         password.value.length >= 8 && !loading.value;
+});
+
+watch(email, (newEmail, oldEmail) => {
+    if (emailValidationFailed.value && newEmail !== failedEmail.value) {
+        emailValidationFailed.value = false;
+        failedEmail.value = '';
+        error.value = '';
+    }
 });
 
 // Step 1: Send reset code
@@ -188,8 +216,19 @@ async function handleSendCode(e) {
     try {
         await sendPasswordResetCode(email.value);
         step.value = 'code';
+        emailValidationFailed.value = false;
+        failedEmail.value = '';
     } catch (err) {
-        error.value = err.response?.data?.message || 'Failed to send reset code. Please try again.';
+        //error.value = err.response?.data?.message || 'Failed to send reset code. Please try again.';
+        const errorMessage = err.response?.data?.message || 'Failed to send reset code. Please try again.';
+        error.value = errorMessage;
+
+        if (errorMessage.toLowerCase().includes('does not exist') ||
+            errorMessage.toLowerCase().includes('not found') ||
+            errorMessage.toLowerCase().includes('no account')) {
+                emailValidationFailed.value = true;
+                failedEmail.value = email.value;
+            }
     } finally {
         loading.value = false;
     }
