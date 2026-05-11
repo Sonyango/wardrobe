@@ -29,6 +29,8 @@
             <RouterView />
           </div>
         </main>
+
+        <Footer />
       </div>
 
       <MobileSidebar
@@ -47,6 +49,7 @@ import Sidebar from './Sidebar.vue';
 import Navbar from './Navbar.vue';
 import MobileSidebar from './MobileSidebar.vue';
 import { useAuthStore } from '../stores/auth';
+import Footer from './Footer.vue';
 
 const sidebarCollapsed = ref(false);
 const mobileSidebarOpen = ref(false);
