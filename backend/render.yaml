@@ -1,0 +1,22 @@
+services:
+  - type: web
+    name: wardrobe-api
+    env: php
+    plan: free
+    buildCommand: composer install && php artisan migrate --force
+    startCommand: vendor/bin/heroku-php-apache2 public/
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: LOG_CHANNEL
+        value: stack
+      - key: FRONTEND_URL
+        fromDatabase:
+          name: wardrobe-db
+          property: connectionString
+  - type: pserv
+    name: wardrobe-db
+    plan: free
+    ipAllowList: []
