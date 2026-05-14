@@ -1,0 +1,5 @@
+[build]
+buildCommand = "composer install --no-dev"
+
+[deploy]
+preDeployCommand = "php artisan migrate --force"
