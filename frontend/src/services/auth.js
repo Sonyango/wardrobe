@@ -1,8 +1,10 @@
 import axios from "axios";
 import { useAuthStore } from "../stores/auth";
 
+const baseURL = import.meta.env.VITE_API_URL || 'https://wardrobe-production.up.railway.app/api';
+
 const api = axios.create({
-    baseURL: 'http://localhost:8000/api',
+    baseURL: baseURL,
     withCredentials: true,
 });
 
