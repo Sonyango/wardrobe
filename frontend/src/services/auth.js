@@ -8,8 +8,50 @@ const api = axios.create({
     withCredentials: true,
 });
 
+// Module-level CSRF token cache. Populated by fetchCsrfToken() and
+// automatically injected into every state-mutating request by the
+// request interceptor below.
+let csrfToken = null;
+
+/**
+ * Fetch the CSRF token from the backend and cache it for subsequent
+ * requests. Laravel exposes the token via GET /csrf-token.
+ * Safe to call multiple times — skips the network round-trip when a
+ * token is already cached.
+ */
+export async function fetchCsrfToken() {
+    if (csrfToken) {
+        return csrfToken;
+    }
+
+    try {
+        const response = await api.get('/csrf-token');
+        csrfToken = response.data.csrf_token ?? response.data.token ?? response.data;
+
+        // Also honour a token returned in the response header (some
+        // Laravel setups send it as X-CSRF-TOKEN).
+        if (!csrfToken && response.headers['x-csrf-token']) {
+            csrfToken = response.headers['x-csrf-token'];
+        }
+    } catch (error) {
+        // Fall back to the meta tag injected by Laravel's Blade layout,
+        // if the app is served from the same origin.
+        const metaTag = document.querySelector('meta[name="csrf-token"]');
+        if (metaTag) {
+            csrfToken = metaTag.getAttribute('content');
+        } else {
+            console.warn('CSRF token could not be retrieved:', error);
+        }
+    }
+
+    return csrfToken;
+}
+
 export async function login(email, password) {
     try {
+        // Ensure the CSRF token is available before the first POST.
+        await fetchCsrfToken();
+
         const response = await api.post('/login', {email, password});
 
         const {token, user} = response.data;
@@ -102,11 +144,23 @@ export async function logout() {
     }
 }
 
-api.interceptors.request.use((config) => {
+const CSRF_METHODS = new Set(['post', 'put', 'patch', 'delete']);
+
+api.interceptors.request.use(async (config) => {
     const authStore = useAuthStore();
     if (authStore.token) {
         config.headers.Authorization = `Bearer ${authStore.token}`;
     }
+
+    // Automatically attach the CSRF token to every state-mutating request
+    // so callers don't have to remember to fetch it themselves.
+    if (CSRF_METHODS.has(config.method?.toLowerCase())) {
+        const token = await fetchCsrfToken();
+        if (token) {
+            config.headers['X-CSRF-TOKEN'] = token;
+        }
+    }
+
     return config;
 });
 
