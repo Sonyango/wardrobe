@@ -1,8 +1,24 @@
 import axios from "axios";
 import { useAuthStore } from "../stores/auth";
 
+// Determine API base URL based on environment
+const getApiBaseUrl = () => {
+    if (import.meta.env.VITE_API_URL) {
+        return import.meta.env.VITE_API_URL;
+    }
+    
+    // Development fallback
+    if (!import.meta.env.PROD) {
+        return 'http://localhost:8000/api';
+    }
+    
+    // Production fallback - derive from current window location
+    // This handles cases where the frontend and backend are on the same domain
+    return `${window.location.protocol}//${window.location.host}/api`;
+};
+
 const api = axios.create({
-    baseURL: 'http://localhost:8000/api',
+    baseURL: getApiBaseUrl(),
     withCredentials: true,
 });
 

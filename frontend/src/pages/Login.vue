@@ -136,7 +136,7 @@ function prevImage() {
 
                         <!--Header-->
                         <div class="text-center mb-8">
-                            <h2 class="text-3xl font-bold text-gray-900">Welcome to Back</h2>
+                            <h2 class="text-3xl font-bold text-gray-900">Welcome Back</h2>
                             <p class="mt-2 text-gray-600">Sign in to your account to access your personalized style insights.</p>
                         </div>
 
