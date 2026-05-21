@@ -19,7 +19,7 @@ const getApiBaseUrl = () => {
 
 const api = axios.create({
     baseURL: getApiBaseUrl(),
-    withCredentials: true,
+    //withCredentials: true,
 });
 
 export async function login(email, password) {
