@@ -12,6 +12,17 @@ use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\UserController;
 
 
+Route::get('debug-cors', function () {
+    return response()->json([
+        'cors_paths' => config('cors.paths'),
+        'cors_origins' => config('cors.allowed_origins'),
+        'cors_credentials' => config('cors.supports_credentials'),
+        'app_env' => config('app.env'),
+        'frontend_url' => env('FRONTEND_URL'),
+    ]);
+});
+
+
 Route::post('register/send-code', [RegistrationController::class, 'sendCode']);
 Route::post('register/verify', [RegistrationController::class, 'verifyCode']);
 
