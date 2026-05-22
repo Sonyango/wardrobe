@@ -11,6 +11,20 @@ use App\Http\Controllers\API\ItemController;
 use App\Http\Controllers\API\DashboardController;
 use App\Http\Controllers\API\UserController;
 
+Route::get('test-mail', function () {
+    try {
+        \Illuminate\Support\Facades\Mail::raw('Test email from Wardrobe production app', function ($message) {
+            $message->to('stephenonyango82@gmail.com')
+                ->subject('Waedrobe Mail Test');
+        });
+        return response()->json(['message' => 'Email sent successfully']);
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Email failed',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+});
 
 Route::get('ping', function () {
     return response()->json([
