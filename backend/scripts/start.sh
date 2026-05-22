@@ -6,13 +6,13 @@ php artisan migrate --force
 echo "Clearing old caches..."
 php artisan config:clear
 php artisan route:clear
+php artisan cache:clear
 php artisan view:clear
 
-echo "Caching config..."
+echo "Rebuilding caches..."
 php artisan config:cache
-
-echo "Caching routes..."
 php artisan route:cache
+php artisan view:cache
 
 echo "Starting PHP-FPM..."
 php-fpm -D
