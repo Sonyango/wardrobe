@@ -5,14 +5,21 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\PendingRegistration;
-use App\Mail\VerificationCodeMail;
-use Illuminate\Support\Facades\Mail;
+use App\Services\VerificationMailService;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class RegistrationController extends Controller
 {
+    protected VerificationMailService $mailService;
+
+    public function __construct(VerificationMailService $mailService)
+    {
+        $this->mailService = $mailService;
+    }
+
     public function sendCode(Request $request)
     {
         $data = $request->validate([
@@ -32,6 +39,7 @@ class RegistrationController extends Controller
         $hashedPassword = Hash::make($data['password']);
 
         $expiresAt = Carbon::now()->addMinutes(15);
+        
         $pending = PendingRegistration::updateOrCreate(
             ['email' => $data['email']],
             [
@@ -44,11 +52,32 @@ class RegistrationController extends Controller
             ]
             );
 
-            Mail::to($data['email'])->send(new VerificationCodeMail($data['fname'], $code));
+            // Mail::to($data['email'])->send(new VerificationCodeMail($data['fname'], $code));
 
-            return response()->json([
-                'message' => 'Verification code sent to your email.'
-            ], 200);
+            // return response()->json([
+            //     'message' => 'Verification code sent to your email.'
+            // ], 200);
+            try {
+                $this->mailService->send(
+                    toEmail: $data['email'],
+                    toName: $data['fname'],
+                    code: (string) $code
+                );
+
+                return response()->json([
+                    'message' => 'Verification code sent to your email.'
+                ], 200);
+
+            } catch (\Exception $e) {
+                Log::error('Failed to send verification code', [
+                    'email' => $data['email'],
+                    'error' => $e->getMessage(),
+                ]);
+
+                return response()->json([
+                    'message' => 'Failed to send verification code. Please try again.'
+                ], 500);
+            }
     }
 
     public function verifyCode(Request $request)
