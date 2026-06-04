@@ -35,6 +35,22 @@ Route::get('ping', function () {
     ]);
 });
 
+Route::get('/internal/cleanup', function () {
+    $secret = request()->query('secret');
+
+    if ($secret !== config('app.cleanup_secret')) {
+        return response()->json(['message' => 'Unauthorized'], 401);
+    }
+
+    $deleted = \App\Models\PendingRegistration::whereNotNull('expires_at')
+        ->where('expires_at', '<', now())
+        ->delete();
+
+    return response()->json([
+        'message' => "Deleted {$deleted} expired pending registrations."
+    ]);
+});
+
 // Route::get('debug-cors', function () {
 //     return response()->json([
 //         'cors_paths' => config('cors.paths'),

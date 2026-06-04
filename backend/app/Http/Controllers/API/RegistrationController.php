@@ -26,7 +26,7 @@ class RegistrationController extends Controller
             'fname' => 'required|string|max:255',
             'lname' => 'required|string|max:255',
             'phone' => 'required|string|max:15',
-            'email' => 'required|email|unique:pending_registrations,email',
+            'email' => 'required|email',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
@@ -39,29 +39,27 @@ class RegistrationController extends Controller
         $hashedPassword = Hash::make($data['password']);
 
         $expiresAt = Carbon::now()->addMinutes(15);
-        
-        $pending = PendingRegistration::updateOrCreate(
-            ['email' => $data['email']],
-            [
-                'fname' => $data['fname'],
-                'lname' => $data['lname'],
-                'phone' => $data['phone'],
-                'password' => $hashedPassword,
-                'code' => $code,
-                'expires_at' => $expiresAt,
-            ]
-            );
 
-            // Mail::to($data['email'])->send(new VerificationCodeMail($data['fname'], $code));
 
-            // return response()->json([
-            //     'message' => 'Verification code sent to your email.'
-            // ], 200);
             try {
+                // send email first before saving anything
                 $this->mailService->send(
                     toEmail: $data['email'],
                     toName: $data['fname'],
                     code: (string) $code
+                );
+
+                // only save to pending_registrations after email is successfully sent
+                $pending = PendingRegistration::updateOrCreate(
+                    ['email' => $data['email']],
+                    [
+                        'fname' => $data['fname'],
+                        'lname' => $data['lname'],
+                        'phone' => $data['phone'],
+                        'password' => $hashedPassword,
+                        'code' => $code,
+                        'expires_at' => $expiresAt,
+                    ]
                 );
 
                 return response()->json([
