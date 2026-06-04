@@ -11,6 +11,8 @@ const router = useRouter();
 const authStore = useAuthStore();
 const toast = useToast();
 
+const loading = ref(false);
+
 const email = ref('');
 const password = ref('');
 const error = ref('');
@@ -25,12 +27,15 @@ const heroImages = [
 
 async function handleSubmit(e) {
     e.preventDefault();
+    loading.value = true;
     try {
         const response = await login(email.value, password.value);
         //authStore.setUser(response.data.user);
         router.push({ name: 'dashboard' });
     } catch (err) {
         error.value = err.response?.data?.message || 'Login failed.';
+    } finally {
+        loading.value = false;
     }
 }
 
@@ -193,10 +198,18 @@ function prevImage() {
 
                         <!-- Submit Button -->
                         <button 
-                            type="submit" 
-                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            type="submit"
+                            :disabled="!email || !password || loading" 
+                            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Sign In
+                            <div v-if="loading" class="flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>Signing in...</span>
+                            </div>
+                            <span v-else>Sign In</span>
                         </button>
                         </form>
 
