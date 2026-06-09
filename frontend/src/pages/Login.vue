@@ -6,6 +6,7 @@ import { login } from '../services/auth';
 import GuestLayout from '../components/GuestLayout.vue';
 import ForgotPassword from '../components/ForgotPassword.vue';
 import { useToast } from 'vue-toastification';
+import Logo from '../components/Logo.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -141,6 +142,7 @@ function prevImage() {
 
                         <!--Header-->
                         <div class="text-center mb-8">
+                            <Logo :logoPath="'/logo.png'" size="lg" altText="Wardrobe Logo" />
                             <h2 class="text-3xl font-bold text-gray-900">Welcome Back</h2>
                             <p class="mt-2 text-gray-600">Sign in to your account to access your personalized style insights.</p>
                         </div>

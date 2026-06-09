@@ -2,6 +2,7 @@
 import { ref, defineComponent, h } from 'vue';
 import { useRoute, RouterLink } from 'vue-router';
 import * as HeroIcons from '@heroicons/vue/24/outline';
+import Logo from '../components/Logo.vue';
 
 const slug = (s = '') => String(s).trim().replace(/\s+/g, '-').toLowerCase();
 
@@ -142,7 +143,7 @@ const SidebarItem = defineComponent({
     <aside
         :class="['bg-gray-800 text-white transition-all duration-300 flex flex-col sticky top-0', 'h-screen', collapsed ? 'w-16' : 'w-64', 'z-30']">
         <div class="flex items-center justify-between p-4">
-            <slot name="logo"></slot>
+            <Logo :logoPath="'/logo.png'" size="sm" altText="Wardrobe Logo" />
             <button @click="toggleMenu('openSidebar')" class="text-gray-400 hover:text-white focus:outline-none" aria-label="Toggle sidebar">
                 <HeroIcons.Bars3Icon class="w-5 h-5"/>
             </button>
