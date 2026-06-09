@@ -59,7 +59,7 @@ function prevImage() {
 
             <!-- Forgot Password Modal -->
              <!-- <ForgotPassword v-model="showForgotPassword" @passwordResetSuccess="passwordResetSuccess" /> -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-0 h-screen md:h-screen">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-0 h-screen md:h-screen overflow-hidden">
 
                 <!-- Left side section -->
                  <div class="hidden md:flex flex-col justify-center items-center bg-linear-to-br from-indigo-400 to-indigo-600 p-12">
@@ -137,7 +137,7 @@ function prevImage() {
                  </div>
 
                 <!-- Right side section -->
-                 <div class="flex flex-col justify-center items-center p8 md:p-12 bg-white md:bg-gray-50 h-full md:h-screen">
+                 <div class="flex flex-col justify-start items-center px-4 py-8 md:px-12 md:py-12 bg-white md:bg-gray-50 h-full md:h-screen">
                     <div class="w-full max-w-sm">
 
                         <!--Header-->
