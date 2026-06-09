@@ -62,7 +62,7 @@ function prevImage() {
             <div class="grid grid-cols-1 md:grid-cols-2 gap-0 h-screen md:h-screen">
 
                 <!-- Left side section -->
-                 <div class="hidden md:flex flex-col justify-center items-center bg-linear-to-br from-indigo-600 to-indigo-800 p-12">
+                 <div class="hidden md:flex flex-col justify-center items-center bg-linear-to-br from-indigo-400 to-indigo-600 p-12">
 
                     <!-- Brand info-->
                      <div class="text-center mb-8">

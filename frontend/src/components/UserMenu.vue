@@ -24,11 +24,11 @@
                         Your Profile
                     </router-link>
                 </MenuItem>
-                <MenuItem v-slot="{ active }">
+                <!-- <MenuItem v-slot="{ active }">
                     <a href="#" :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']">
                         Settings
                     </a>
-                </MenuItem>
+                </MenuItem> -->
                 <MenuItem v-slot="{ active }">
                     <button @click="$emit('logout')"
                         :class="[active ? 'bg-gray-100' : '', 'block w-full text-left px-4 py-2 text-sm text-gray-700']">

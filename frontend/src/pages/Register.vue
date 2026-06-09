@@ -3,6 +3,7 @@ import GuestLayout from '../components/GuestLayout.vue';
 import { ref, reactive, computed, watch, onMounted, onBeforeUnmount } from 'vue';
 import { useRouter } from 'vue-router';
 import { api } from '../services/auth';
+import Logo from '../components/Logo.vue';
 
 const router = useRouter();
 
@@ -221,7 +222,13 @@ async function resendCode() {
 
 <template>
     <GuestLayout>
-        <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign up for an account</h2>
+        <div class="mx-auto my-10 w-full max-w-md rounded-lg bg-white p-8 shadow-md sm:max-w-sm">
+
+            <div class="mb-6">
+                <Logo :logoPath="'/logo.png'" size="lg" altText="Wardrobe Logo" />
+            </div>
+
+        <h2 class="text-center text-2xl/9 font-bold tracking-tight text-gray-900">Sign up for an account</h2>
 
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
 
@@ -337,6 +344,7 @@ async function resendCode() {
                 <RouterLink :to="{ name: 'login' }" class="font-semibold text-indigo-600 hover:text-indigo-500">Login
                 </RouterLink>
             </p>
+        </div>
         </div>
     </GuestLayout>
 </template>
